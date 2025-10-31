@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+*.venv
+venv/
+ENV/
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# FastAPI & aiogram — нет специфических артефактов, но если есть static/uploads:
+static/
+uploads/
+
+# Environment variables
+.env
+.env.*
+
+# IDEs/Editors
+.vscode/
+.idea/
+*.swp
+*.sublime-workspace
+*.sublime-project
+*.DS_Store
+
+# Tests/coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.pytest_cache/
+test-results/
+
+# Logs/tmp files
+*.log
+*.tmp
+*.bak
+*.pid
+
+# PIP
+pip-wheel-metadata/
+pip-log.txt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Docker (если вдруг)
+docker-compose.override.yml
+docker-compose.local.yml
