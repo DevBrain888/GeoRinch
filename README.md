@@ -25,7 +25,36 @@
 
 ### Launch project:
 
-- **-** **`python main.py`** - Запуск кода python.
+1. Клонируйте репозиторий:
+   ```bash
+   git clone https://github.com/DevBrain888/GeoRinch.git
+   cd GeoRinch
+   ```
+
+2. Создайте виртуальное окружение:
+   ```bash
+   python -m venv venv
+   # Windows
+   venv\Scripts\activate
+   # Linux/Mac
+   source venv/bin/activate
+   ```
+
+3. Установите зависимости:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Создайте файл `.env` в корне проекта:
+   ```env
+   BOT_TOKEN=your_bot_token_here
+   ```
+   Получите токен у [@BotFather](https://t.me/BotFather) в Telegram.
+
+5. Запустите бота:
+   ```bash
+   python main.py
+   ```
 
 ## 🚀 Distribute
 

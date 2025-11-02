@@ -8,6 +8,7 @@ __pycache__/
 venv/
 ENV/
 env/
+georinch/
 build/
 develop-eggs/
 dist/
@@ -54,10 +55,13 @@ coverage.xml
 test-results/
 
 # Logs/tmp files
+logs/
 *.log
 *.tmp
 *.bak
 *.pid
+*.exe
+*.cfg
 
 # PIP
 pip-wheel-metadata/
