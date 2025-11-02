@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
-from aiogram.types import Message, ErrorEvent
+from aiogram.types import Message, ErrorEvent, ReplyKeyboardMarkup, KeyboardButton
 
 # Загружаем переменные окружения из .env файла
 load_dotenv()
@@ -89,11 +89,47 @@ async def error_handler(event: ErrorEvent):
     return None
 
 
+# Создаем клавиатуру с reply кнопками
+def get_main_keyboard() -> ReplyKeyboardMarkup:
+    """Создает главную клавиатуру бота"""
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(text="Поиск кабинета"),
+                KeyboardButton(text="Как пройти от моего кабинета до другого")
+            ],
+            [
+                KeyboardButton(text="Карта колледжа"),
+                KeyboardButton(text="Справочник")
+            ],
+            [
+                KeyboardButton(text="Избранное")
+            ]
+        ],
+        resize_keyboard=True
+    )
+    return keyboard
+
+
 @dp.message(CommandStart())
 async def cmd_start(message: Message):
     try:
         logger.info(f"Получена команда /start от пользователя {message.from_user.id}")
-        await message.answer("Hello!")
+        welcome_text = """Добро пожаловать в бота Карта ФЭК РГЭУ (РИНХ 🗺)!
+
+😎Здесь вы сможете найти нужный вам кабинет и ориентироваться по колледжу
+
+Для начала работы выберите нужный режим на клавиатуре ниже: 
+
+- Поиск кабинета❓
+- Карта колледжа🗺
+- Как пройти от моего кабинета до другого
+- Справочник✏️
+- Избранное⭐️
+
+Внимание! Бот находиться на стадий тестирования, поэтому могут быть небольшие ошибки или неточности."""
+        await message.answer(welcome_text)
+        await message.answer("Выберите режим:", reply_markup=get_main_keyboard())
     except Exception as e:
         logger.error(f"Ошибка в обработчике cmd_start: {e}", exc_info=True)
         # Не отправляем ошибку пользователю, только логируем
