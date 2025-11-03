@@ -23,44 +23,161 @@
 
 ## Documentation
 
-### Launch project:
+### Local launch (for development)
 
-1. Клонируйте репозиторий:
+Вариант A — Polling (просто и без внешнего URL):
+
+1. Клонировать и установить зависимости
    ```bash
    git clone https://github.com/DevBrain888/GeoRinch.git
    cd GeoRinch
-   ```
-
-2. Создайте виртуальное окружение:
-   ```bash
-   python -m venv venv
+   python -m venv .venv
    # Windows
-   venv\Scripts\activate
+   .venv\Scripts\Activate.ps1
    # Linux/Mac
-   source venv/bin/activate
-   ```
-
-3. Установите зависимости:
-   ```bash
+   source .venv/bin/activate
    pip install -r requirements.txt
    ```
-
-4. Создайте файл `.env` в корне проекта:
+2. Создать локальный `.env` (рекомендуется отдельный тестовый токен):
    ```env
-   BOT_TOKEN=your_bot_token_here
+   BOT_TOKEN=your_dev_bot_token
+   USE_WEBHOOK=false
    ```
-   Получите токен у [@BotFather](https://t.me/BotFather) в Telegram.
-
-5. Запустите бота:
+3. Запуск
    ```bash
    python main.py
    ```
+   Откройте чат с dev-ботом в Telegram и отправьте /start.
+
+Вариант B — Локальный Webhook через туннель (ngrok/Cloudflare Tunnel):
+
+1. `.env` для локального webhook
+   ```env
+   BOT_TOKEN=your_dev_bot_token
+   USE_WEBHOOK=true
+   WEBHOOK_HOST=127.0.0.1
+   WEBHOOK_PORT=8000
+   ```
+2. Запуск приложения
+   ```bash
+   python main.py
+   # Локальная проверка
+   curl.exe http://127.0.0.1:8000/health
+   ```
+3. Поднять туннель и получить публичный https URL
+   - ngrok: `ngrok http 8000`
+   - возьмите выданный URL вида `https://....ngrok-free.app`
+4. Установить webhook на публичный URL (обязательно добавить токен в конец пути):
+   ```bash
+   curl "https://api.telegram.org/bot<DEV_TOKEN>/setWebhook?url=https://<NGROK_URL>/webhook/<DEV_TOKEN>"
+   curl "https://api.telegram.org/bot<DEV_TOKEN>/getWebhookInfo"
+   ```
+   При смене URL туннеля — переустановите webhook.
+
+Примечание: для разработки удобнее использовать отдельного бота (DEV_TOKEN), чтобы не мешать продакшену.
+
+---
+
+### Продакшен на Ubuntu VPS (Nginx + HTTPS + Webhook)
+
+Требования: Ubuntu 22.04+, домен, публичный IPv4.
+
+1) Базовая подготовка сервера
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git python3-venv python3-pip nginx ufw curl
+sudo ufw status # Проверте работает ли увас в принципе ufw
+sudo ufw allow OpenSSH 
+sudo ufw allow 'Nginx Full'
+sudo ufw --force enable
+```
+
+2) Клонирование проекта и зависимости
+```bash
+cd /opt
+sudo git clone https://github.com/DevBrain888/GeoRinch.git
+sudo chown -R $USER:$USER GeoRinch
+cd GeoRinch
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+3) DNS
+— У регистратора создайте A‑запись `bot.example.com` → IP вашего VPS. Проверьте `dig +short bot.example.com`.
+
+4) Конфигурация приложения (.env)
+```env
+BOT_TOKEN=your_prod_bot_token
+USE_WEBHOOK=true
+WEBHOOK_HOST=127.0.0.1
+WEBHOOK_PORT=8000
+```
+
+5) Проверка приложения локально на сервере
+```bash
+python main.py
+curl -I http://127.0.0.1:8000/health   # ожидается 200 OK
+# Остановите Ctrl+C перед настройкой Nginx/HTTPS
+```
+
+6) Nginx (reverse‑proxy на 127.0.0.1:8000)
+```bash
+sudo bash -lc 'cat > /etc/nginx/sites-available/georinch << "CONF"
+server {
+    listen 80;
+    server_name bot.example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+CONF'
+sudo ln -sf /etc/nginx/sites-available/georinch /etc/nginx/sites-enabled/georinch
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+7) HTTPS (Let’s Encrypt)
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d bot.example.com --redirect --agree-tos -m you@example.com -n
+```
+
+8) Запуск приложения в прод и установка webhook
+```bash
+# В venv
+source /opt/GeoRinch/.venv/bin/activate
+python /opt/GeoRinch/main.py
+
+# В другом окне/терминале
+curl -I https://bot.example.com/health
+
+# Важно: в webhook URL обязательно токен в конце
+curl "https://api.telegram.org/bot<PROD_TOKEN>/setWebhook?url=https://bot.example.com/webhook/<PROD_TOKEN>"
+curl "https://api.telegram.org/bot<PROD_TOKEN>/getWebhookInfo"
+```
+
+9) Проверка
+— Откройте чат с ботом и отправьте `/start`.
+— В логах должны появиться POST запросы на `/webhook/<TOKEN>` и ответ пользователю.
 
 ## 🚀 Distribute
 
 ### 📦 Минимальные требования
 - Python 3.12+
 - pip
+- git
+- curl
+- python3-venv (на Ubuntu)
+- Nginx (для прод вебхука)
+- Certbot + плагин nginx (для HTTPS в проде)
+- UFW (фаервол на Ubuntu, по желанию)
+- (Опционально для локальных вебхуков) ngrok или Cloudflare Tunnel
 
 ## Contributors
 
