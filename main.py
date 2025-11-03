@@ -18,7 +18,7 @@ bot = Bot(token=config.BOT_TOKEN)
 dp = Dispatcher()
 
 # Регистрируем все обработчики
-register_all_handlers(dp)
+register_all_handlers(dp, bot)
 
 
 async def main_polling():

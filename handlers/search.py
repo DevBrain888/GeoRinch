@@ -30,6 +30,7 @@ from handlers.constants import (
 )
 from handlers.map import is_user_in_map_mode
 from handlers.route import is_user_in_route_mode
+from handlers.notifications import add_user_to_main_menu, remove_user_from_main_menu
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,9 @@ _user_last_selected_floor: Dict[int, int] = {}
 async def on_search_entry(message: Message):
     """Точка входа: пользователь нажимает кнопку "Поиск кабинета"."""
     try:
+        user_id = message.from_user.id if message.from_user else None
+        if user_id:
+            remove_user_from_main_menu(user_id)  # Удаляем из главного меню при входе в поиск
         await message.answer(
             "Выберите этаж:", reply_markup=get_floor_selection_keyboard()
         )
@@ -167,6 +171,9 @@ async def on_room_selected(message: Message):
         
         # Возвращаем пользователя в начальное состояние (главное меню)
         await message.answer("Выберите режим:", reply_markup=get_main_keyboard())
+        # Отслеживаем, что пользователь вернулся в главное меню
+        if user_id:
+            add_user_to_main_menu(user_id)
         
         # Сбрасываем сохранённый этаж, чтобы не влиять на последующие действия
         if user_id in _user_last_selected_floor:

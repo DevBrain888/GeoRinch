@@ -6,9 +6,10 @@ from .favorites import register_favorites_handlers
 from .map import register_map_handlers
 from .guide import register_guide_handlers
 from .route import register_route_handlers
+from .notifications import register_notification_handlers
 
 
-def register_all_handlers(dp):
+def register_all_handlers(dp, bot):
     """Регистрация всех обработчиков бота."""
     register_error_handler(dp)
     register_start_handler(dp)
@@ -20,6 +21,7 @@ def register_all_handlers(dp):
     register_search_handlers(dp) # Затем поиск (без фильтров, но проверяет состояние внутри)
     register_favorites_handlers(dp)
     register_guide_handlers(dp)
+    register_notification_handlers(dp, bot)  # Уведомления (нужен bot для фоновой задачи)
 
 
 __all__ = [

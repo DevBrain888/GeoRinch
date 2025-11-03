@@ -7,6 +7,7 @@ from aiogram.types import Message
 from keyboards import get_main_keyboard, get_floor_selection_keyboard
 from handlers.constants import MAP_ENTRY_TEXT, FLOOR_1_TEXT, FLOOR_2_TEXT, FLOOR_3_TEXT, FLOOR_4_TEXT
 from handlers.utils import parse_floor_label, get_floor_image_url
+from handlers.notifications import add_user_to_main_menu, remove_user_from_main_menu
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ async def on_map_entry(message: Message):
         user_id = message.from_user.id if message.from_user else None
         if not user_id:
             return
+        remove_user_from_main_menu(user_id)  # Удаляем из главного меню при входе в карту
         _map_state[user_id] = {"step": "await_floor"}
         await message.answer("Выберите этаж:", reply_markup=get_floor_selection_keyboard())
     except Exception as e:
@@ -60,6 +62,8 @@ async def on_map_floor(message: Message):
             await message.answer_photo(photo=image_url)
         await message.answer("Выберите режим:", reply_markup=get_main_keyboard())
         _map_state.pop(user_id, None)
+        # Отслеживаем, что пользователь вернулся в главное меню
+        add_user_to_main_menu(user_id)
     except Exception as e:
         logger.error(f"Ошибка в on_map_floor: {e}", exc_info=True)
 

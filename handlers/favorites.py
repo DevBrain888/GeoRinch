@@ -6,6 +6,7 @@ from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, C
 from keyboards import get_main_keyboard
 from handlers.constants import FAVORITES_ENTRY_TEXT
 from handlers.db.favorites import add_favorite, remove_favorite, list_favorites
+from handlers.notifications import add_user_to_main_menu, remove_user_from_main_menu
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +23,12 @@ async def on_favorites_entry(message: Message):
         user_id = message.from_user.id if message.from_user else None
         if not user_id:
             return
+        remove_user_from_main_menu(user_id)  # Удаляем из главного меню при входе в избранное
         rooms = list_favorites(user_id)
         if not rooms:
             await message.answer("Избранное пусто.", reply_markup=get_main_keyboard())
+            # Отслеживаем, что пользователь вернулся в главное меню
+            add_user_to_main_menu(user_id)
             return
         kb_rows = [
             [InlineKeyboardButton(text=f"{room} ❌", callback_data=f"del_favorite:{room}")]
@@ -130,6 +134,8 @@ async def on_delete_favorite_callback(callback: CallbackQuery):
             # если пусто — заменим сообщение
             try:
                 await callback.message.edit_text("Избранное пусто.")
+                # Отслеживаем, что пользователь вернулся в главное меню
+                add_user_to_main_menu(user_id)
             except Exception as e:
                 logger.error(f"Ошибка при редактировании сообщения: {e}", exc_info=True)
     except Exception as e:

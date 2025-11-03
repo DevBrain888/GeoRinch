@@ -17,6 +17,7 @@ from handlers.constants import (
     FOURTH_FLOOR_ROOM_BUTTONS,
 )
 from handlers.utils import parse_floor_label, get_rooms_keyboard_by_floor, get_rooms_set_by_floor
+from handlers.notifications import add_user_to_main_menu, remove_user_from_main_menu
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +62,7 @@ async def on_route_entry(message: Message):
         user_id = message.from_user.id if message.from_user else None
         if not user_id:
             return
+        remove_user_from_main_menu(user_id)  # Удаляем из главного меню при входе в маршрут
         _route_state[user_id] = {"step": "await_floor_a"}
         await message.answer("Выберите начальный этаж:", reply_markup=get_floor_selection_keyboard())
     except Exception as e:
@@ -154,6 +156,8 @@ async def on_route_room(message: Message):
             await message.answer("Здесь Скоро все будет работать")
             await message.answer("Выберите режим:", reply_markup=get_main_keyboard())
             _route_state.pop(user_id, None)
+            # Отслеживаем, что пользователь вернулся в главное меню
+            add_user_to_main_menu(user_id)
             return
     except Exception as e:
         logger.error(f"Ошибка в on_route_room: {e}", exc_info=True)
