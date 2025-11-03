@@ -59,7 +59,7 @@
 ## 🚀 Distribute
 
 ### 📦 Минимальные требования
-- Python 3.9+
+- Python 3.12+
 - pip
 
 ## Contributors
