@@ -63,6 +63,14 @@ logs/
 *.exe
 *.cfg
 
+# Databases
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
 # PIP
 pip-wheel-metadata/
 pip-log.txt

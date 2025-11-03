@@ -12,7 +12,7 @@ def get_main_keyboard() -> ReplyKeyboardMarkup:
             ],
             [
                 KeyboardButton(text="Карта колледжа"), # +
-                KeyboardButton(text="Справочник")
+                KeyboardButton(text="Справочник") # +
             ],
             [
                 KeyboardButton(text="Избранное")
