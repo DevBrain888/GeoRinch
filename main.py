@@ -7,7 +7,7 @@ import sys
 from aiogram import Bot, Dispatcher
 
 import config
-from handlers import register_error_handler, register_start_handler
+from handlers import register_error_handler, register_start_handler, register_search_handlers
 from webhook_handler import create_webhook_app
 
 logger = logging.getLogger(__name__)
@@ -20,6 +20,7 @@ dp = Dispatcher()
 # Регистрируем все обработчики
 register_error_handler(dp)
 register_start_handler(dp)
+register_search_handlers(dp)
 
 
 async def main_polling():
