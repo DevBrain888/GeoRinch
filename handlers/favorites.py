@@ -14,6 +14,20 @@ from handlers.constants import (
     SECOND_FLOOR_ROOM_IMAGE_URL,
     THIRD_FLOOR_ROOM_IMAGE_URL,
     FOURTH_FLOOR_ROOM_IMAGE_URL,
+    FIRST_FLOOR_SELECTED_ROOM_101,
+    FIRST_FLOOR_SELECTED_ROOM_102,
+    FIRST_FLOOR_SELECTED_ROOM_103,
+    FIRST_FLOOR_SELECTED_ROOM_104,
+    FIRST_FLOOR_SELECTED_ROOM_105,
+    FIRST_FLOOR_SELECTED_ROOM_106,
+    FIRST_FLOOR_SELECTED_ROOM_107,
+    FIRST_FLOOR_SELECTED_ROOM_108,
+    FIRST_FLOOR_SELECTED_ROOM_109,
+    FIRST_FLOOR_SELECTED_ROOM_110,
+    FIRST_FLOOR_SELECTED_ROOM_111,
+    FIRST_FLOOR_SELECTED_ROOM_Охрана,
+    FIRST_FLOOR_SELECTED_ROOM_Гардероб,
+    FIRST_FLOOR_SELECTED_ROOM_Туалет,
 )
 from handlers.db.favorites import add_favorite, remove_favorite, list_favorites
 from handlers.notifications import add_user_to_main_menu, remove_user_from_main_menu
@@ -183,9 +197,32 @@ async def on_show_favorite_callback(callback: CallbackQuery):
             await callback.answer("Не удалось определить кабинет", show_alert=True)
             return
 
+        # Словарь для сопоставления кабинетов первого этажа с их изображениями
+        FIRST_FLOOR_ROOM_IMAGES = {
+            "101": FIRST_FLOOR_SELECTED_ROOM_101,
+            "102": FIRST_FLOOR_SELECTED_ROOM_102,
+            "103": FIRST_FLOOR_SELECTED_ROOM_103,
+            "104": FIRST_FLOOR_SELECTED_ROOM_104,
+            "105": FIRST_FLOOR_SELECTED_ROOM_105,
+            "106": FIRST_FLOOR_SELECTED_ROOM_106,
+            "107": FIRST_FLOOR_SELECTED_ROOM_107,
+            "108": FIRST_FLOOR_SELECTED_ROOM_108,
+            "109": FIRST_FLOOR_SELECTED_ROOM_109,
+            "110": FIRST_FLOOR_SELECTED_ROOM_110,
+            "111": FIRST_FLOOR_SELECTED_ROOM_111,
+            "Охрана": FIRST_FLOOR_SELECTED_ROOM_Охрана,
+            "Гардероб": FIRST_FLOOR_SELECTED_ROOM_Гардероб,
+            "Туалет": FIRST_FLOOR_SELECTED_ROOM_Туалет,
+        }
+        
         # Определяем этаж по названию кабинета
         if room in FIRST_FLOOR_ROOM_BUTTONS:
-            image_url = FIRST_FLOOR_ROOM_IMAGE_URL
+            # Для первого этажа проверяем, есть ли специальное изображение
+            if room in FIRST_FLOOR_ROOM_IMAGES:
+                image_url = FIRST_FLOOR_ROOM_IMAGES[room]
+            else:
+                # Если нет специального изображения, используем общее изображение этажа
+                image_url = FIRST_FLOOR_ROOM_IMAGE_URL
         elif room in SECOND_FLOOR_ROOM_BUTTONS:
             image_url = SECOND_FLOOR_ROOM_IMAGE_URL
         elif room in THIRD_FLOOR_ROOM_BUTTONS:

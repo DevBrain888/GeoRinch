@@ -22,6 +22,27 @@ SECOND_FLOOR_ROOM_IMAGE_URL = "https://i.ibb.co/TDKqpQzb/2Floor.jpg"
 THIRD_FLOOR_ROOM_IMAGE_URL = "https://i.ibb.co/sv6XhMnS/3Floor.jpg"
 FOURTH_FLOOR_ROOM_IMAGE_URL = "https://i.ibb.co/DDpVqcFP/4Floor.jpg"
 
+
+"""Выделенные кабинеты 1 этажа"""
+FIRST_FLOOR_SELECTED_ROOM_101 = "https://i.ibb.co/tw4z38ZG/image.png"
+FIRST_FLOOR_SELECTED_ROOM_102 = "https://i.ibb.co/7Nn1K248/image.png"
+FIRST_FLOOR_SELECTED_ROOM_103 = "https://i.ibb.co/nsKKwZ1f/image.png"
+
+FIRST_FLOOR_SELECTED_ROOM_104 = "https://i.ibb.co/3PNTXKZ/image.png"
+FIRST_FLOOR_SELECTED_ROOM_105 = "https://i.ibb.co/H6g5wvx/image.png"
+FIRST_FLOOR_SELECTED_ROOM_106 = "https://i.ibb.co/rRN2RvRH/image.png"
+
+FIRST_FLOOR_SELECTED_ROOM_107 = "https://i.ibb.co/KxyFFkYR/image.png"
+FIRST_FLOOR_SELECTED_ROOM_108 = "https://i.ibb.co/6G9nT2d/image.png"
+FIRST_FLOOR_SELECTED_ROOM_109 = "https://i.ibb.co/gbbBggvm/image.png"
+FIRST_FLOOR_SELECTED_ROOM_110 = "https://i.ibb.co/mrLq3w2y/image.png"
+FIRST_FLOOR_SELECTED_ROOM_111 = "https://i.ibb.co/LDDyKzRb/image.png"
+
+FIRST_FLOOR_SELECTED_ROOM_Охрана = "https://i.ibb.co/tw4z38ZG/image.png"
+FIRST_FLOOR_SELECTED_ROOM_Гардероб = "https://i.ibb.co/tw4z38ZG/image.png"
+FIRST_FLOOR_SELECTED_ROOM_Туалет = "https://i.ibb.co/Hftrr8rw/image.png"
+
+
 # URL изображений справочника
 GUIDE_SHOP = "https://i.ibb.co/tjcVCG1/guide-apteka.png"
 GUIDE_APTEKA = "https://i.ibb.co/5hvtkHdZ/guide-shop.png"

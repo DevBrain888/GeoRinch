@@ -27,6 +27,20 @@ from handlers.constants import (
     SECOND_FLOOR_ROOM_IMAGE_URL,
     THIRD_FLOOR_ROOM_IMAGE_URL,
     FOURTH_FLOOR_ROOM_IMAGE_URL,
+    FIRST_FLOOR_SELECTED_ROOM_101,
+    FIRST_FLOOR_SELECTED_ROOM_102,
+    FIRST_FLOOR_SELECTED_ROOM_103,
+    FIRST_FLOOR_SELECTED_ROOM_104,
+    FIRST_FLOOR_SELECTED_ROOM_105,
+    FIRST_FLOOR_SELECTED_ROOM_106,
+    FIRST_FLOOR_SELECTED_ROOM_107,
+    FIRST_FLOOR_SELECTED_ROOM_108,
+    FIRST_FLOOR_SELECTED_ROOM_109,
+    FIRST_FLOOR_SELECTED_ROOM_110,
+    FIRST_FLOOR_SELECTED_ROOM_111,
+    FIRST_FLOOR_SELECTED_ROOM_Охрана,
+    FIRST_FLOOR_SELECTED_ROOM_Гардероб,
+    FIRST_FLOOR_SELECTED_ROOM_Туалет,
 )
 from handlers.map import is_user_in_map_mode
 from handlers.route import is_user_in_route_mode
@@ -120,6 +134,25 @@ async def on_floor_4(message: Message):
         logger.error(f"Ошибка в on_floor_4: {e}", exc_info=True)
 
 
+# Словарь для сопоставления кабинетов первого этажа с их изображениями
+FIRST_FLOOR_ROOM_IMAGES = {
+    "101": FIRST_FLOOR_SELECTED_ROOM_101,
+    "102": FIRST_FLOOR_SELECTED_ROOM_102,
+    "103": FIRST_FLOOR_SELECTED_ROOM_103,
+    "104": FIRST_FLOOR_SELECTED_ROOM_104,
+    "105": FIRST_FLOOR_SELECTED_ROOM_105,
+    "106": FIRST_FLOOR_SELECTED_ROOM_106,
+    "107": FIRST_FLOOR_SELECTED_ROOM_107,
+    "108": FIRST_FLOOR_SELECTED_ROOM_108,
+    "109": FIRST_FLOOR_SELECTED_ROOM_109,
+    "110": FIRST_FLOOR_SELECTED_ROOM_110,
+    "111": FIRST_FLOOR_SELECTED_ROOM_111,
+    "Охрана": FIRST_FLOOR_SELECTED_ROOM_Охрана,
+    "Гардероб": FIRST_FLOOR_SELECTED_ROOM_Гардероб,
+    "Туалет": FIRST_FLOOR_SELECTED_ROOM_Туалет,
+}
+
+
 async def on_room_selected(message: Message):
     """Отправить картинку выбранного этажа и показать инлайн кнопку добавления в избранное."""
     try:
@@ -133,8 +166,15 @@ async def on_room_selected(message: Message):
         last_floor = _user_last_selected_floor.get(user_id) if user_id else None
         if last_floor is None:
             return
+        
+        # Для первого этажа используем конкретные изображения кабинетов
         if last_floor == 1:
-            image_url = FIRST_FLOOR_ROOM_IMAGE_URL
+            # Проверяем, есть ли специальное изображение для этого кабинета
+            if selected_text in FIRST_FLOOR_ROOM_IMAGES:
+                image_url = FIRST_FLOOR_ROOM_IMAGES[selected_text]
+            else:
+                # Если нет специального изображения, используем общее изображение этажа
+                image_url = FIRST_FLOOR_ROOM_IMAGE_URL
         elif last_floor == 2:
             image_url = SECOND_FLOOR_ROOM_IMAGE_URL
         elif last_floor == 3:
