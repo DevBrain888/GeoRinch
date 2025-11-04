@@ -2,7 +2,7 @@
 import logging
 from typing import Dict, Any, Set
 from aiogram import Dispatcher, F
-from aiogram.types import Message
+from aiogram.types import Message, BufferedInputFile
 
 from keyboards import get_main_keyboard, get_floor_selection_keyboard
 from handlers.constants import (
@@ -18,6 +18,7 @@ from handlers.constants import (
 )
 from handlers.utils import parse_floor_label, get_rooms_keyboard_by_floor, get_rooms_set_by_floor
 from handlers.notifications import add_user_to_main_menu, remove_user_from_main_menu
+from pathfinder import get_path_image
 
 logger = logging.getLogger(__name__)
 
@@ -152,9 +153,59 @@ async def on_route_room(message: Message):
                 return
             
             st["room_b"] = selected_room
+            floor_a = st.get("floor_a")
+            
+            # Проверяем, что кабинеты на одном этаже
+            if floor_a != floor_b:
+                await message.answer(
+                    f"К сожалению, построение маршрута между разными этажами пока не поддерживается.\n"
+                    f"Вы выбрали кабинеты на разных этажах: {floor_a} этаж и {floor_b} этаж.",
+                    reply_markup=get_main_keyboard()
+                )
+                _route_state.pop(user_id, None)
+                add_user_to_main_menu(user_id)
+                return
+            
+            # Проверяем этаж - пока только для первого этажа
+            if floor_a != 1:
+                await message.answer(
+                    "Построение маршрута для этого этажа появится чуть позже. Пока доступно построение маршрута только для 1 этажа.",
+                    reply_markup=get_main_keyboard()
+                )
+                _route_state.pop(user_id, None)
+                add_user_to_main_menu(user_id)
+                return
+            
+            # Получаем изображение с путем (только для первого этажа)
+            try:
+                path_image = get_path_image(room_a, selected_room, floor_a)
+                
+                if path_image is None:
+                    await message.answer(
+                        "К сожалению, не удалось построить маршрут. Возможно, путь между этими кабинетами не найден.",
+                        reply_markup=get_main_keyboard()
+                    )
+                else:
+                    # Отправляем изображение с маршрутом
+                    # Читаем данные из BytesIO
+                    path_image.seek(0)
+                    photo_file = BufferedInputFile(
+                        path_image.read(),
+                        filename="route.png"
+                    )
+                    await message.answer_photo(
+                        photo=photo_file,
+                        caption=f"Маршрут от кабинета {room_a} до кабинета {selected_room}",
+                        reply_markup=get_main_keyboard()
+                    )
+            except Exception as e:
+                logger.error(f"Ошибка при построении маршрута: {e}", exc_info=True)
+                await message.answer(
+                    "Произошла ошибка при построении маршрута. Попробуйте позже.",
+                    reply_markup=get_main_keyboard()
+                )
+            
             # Финал сценария
-            await message.answer("Здесь Скоро все будет работать")
-            await message.answer("Выберите режим:", reply_markup=get_main_keyboard())
             _route_state.pop(user_id, None)
             # Отслеживаем, что пользователь вернулся в главное меню
             add_user_to_main_menu(user_id)
