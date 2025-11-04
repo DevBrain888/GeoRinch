@@ -12,7 +12,7 @@
 
 </p>
 <p align="center">
-  <img src="https://img.shields.io/badge/python_3.14-blue" alt="Python Version">
+  <img src="https://img.shields.io/badge/python_3.12%2B-blue" alt="Python Version">
   <img src="https://img.shields.io/badge/version-v_1.0.0-violet" alt="GeoRinch Version">
 </p>
 
@@ -67,9 +67,9 @@
 3. Поднять туннель и получить публичный https URL
    - ngrok: `ngrok http 8000`
    - возьмите выданный URL вида `https://....ngrok-free.app`
-4. Установить webhook на публичный URL (обязательно добавить токен в конец пути):
+4. Установить webhook на публичный URL (обязательно добавить токен в конец пути и разрешить callback_query):
    ```bash
-   curl "https://api.telegram.org/bot<DEV_TOKEN>/setWebhook?url=https://<NGROK_URL>/webhook/<DEV_TOKEN>"
+   curl "https://api.telegram.org/bot<DEV_TOKEN>/setWebhook?url=https://<NGROK_URL>/webhook/<DEV_TOKEN>&allowed_updates=%5B%22message%22,%22callback_query%22%5D"
    curl "https://api.telegram.org/bot<DEV_TOKEN>/getWebhookInfo"
    ```
    При смене URL туннеля — переустановите webhook.
@@ -148,7 +148,7 @@ sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d bot.example.com --redirect --agree-tos -m you@example.com -n
 ```
 
-8) Запуск приложения в прод и установка webhook
+8) Запуск приложения в прод и установка webhook (разрешаем callback_query)
 ```bash
 # В venv
 source /opt/GeoRinch/.venv/bin/activate
@@ -157,8 +157,8 @@ python /opt/GeoRinch/main.py
 # В другом окне/терминале
 curl -I https://bot.example.com/health
 
-# Важно: в webhook URL обязательно токен в конце
-curl "https://api.telegram.org/bot<PROD_TOKEN>/setWebhook?url=https://bot.example.com/webhook/<PROD_TOKEN>"
+# Важно: в webhook URL обязательно токен в конце + allowed_updates с callback_query
+curl "https://api.telegram.org/bot<PROD_TOKEN>/setWebhook?url=https://bot.example.com/webhook/<PROD_TOKEN>&allowed_updates=%5B%22message%22,%22callback_query%22%5D"
 curl "https://api.telegram.org/bot<PROD_TOKEN>/getWebhookInfo"
 ```
 
@@ -178,6 +178,12 @@ curl "https://api.telegram.org/bot<PROD_TOKEN>/getWebhookInfo"
 - Certbot + плагин nginx (для HTTPS в проде)
 - UFW (фаервол на Ubuntu, по желанию)
 - (Опционально для локальных вебхуков) ngrok или Cloudflare Tunnel
+
+### 🔧 Troubleshooting
+- Если не приходят нажатия инлайн‑кнопок в режиме webhook:
+  - Переустановите webhook с `allowed_updates` (см. команды выше).
+  - Убедитесь, что URL публичный HTTPS и совпадает с `/webhook/<TOKEN>`.
+  - При смене адреса туннеля (ngrok) — перевыставьте webhook.
 
 ## Contributors
 
