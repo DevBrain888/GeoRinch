@@ -22,8 +22,24 @@ _users_in_main_menu: Set[int] = set()
 _last_notification_time: Dict[int, datetime] = {}
 
 # Минимальный и максимальный интервал между уведомлениями (в секундах)
-MIN_INTERVAL = 300  # 5 минут
-MAX_INTERVAL = 1800  # 30 минут
+MIN_INTERVAL = 7200  # 10 секунд
+MAX_INTERVAL = 14400  # 30 минут
+
+# Периодичность проверки
+CHECK_PERIOD_SECONDS = 60
+
+# Пользователи, которым уже отправлялось одноразовое сообщение при /start (за сессию процесса)
+_start_once_sent_users: Set[int] = set()
+
+def need_one_time_start_smoking_notice(user_id: int) -> bool:
+    """Вернёт True только один раз за сессию процесса для каждого пользователя.
+
+    Используется, чтобы отправить уведомление между приветствием и меню только при первом /start.
+    """
+    if user_id in _start_once_sent_users:
+        return False
+    _start_once_sent_users.add(user_id)
+    return True
 
 
 def add_user_to_main_menu(user_id: int):
@@ -58,17 +74,22 @@ async def send_notification_to_user(bot: Bot, user_id: int):
 def should_send_notification(user_id: int) -> bool:
     """Проверить, нужно ли отправить уведомление пользователю."""
     if not is_user_in_main_menu(user_id):
+        logger.debug(f"Пользователь {user_id} не в главном меню — уведомление не требуется")
         return False
     
     last_time = _last_notification_time.get(user_id)
     if last_time is None:
         # Первое уведомление - отправим через случайный интервал
+        logger.debug(f"Пользователь {user_id}: нет предыдущих отправок — уведомление будет отправлено")
         return True
     
     # Вычисляем случайный интервал для этого пользователя
     elapsed = (datetime.now() - last_time).total_seconds()
     interval = random.randint(MIN_INTERVAL, MAX_INTERVAL)
-    
+    logger.debug(
+        f"Пользователь {user_id}: прошло {elapsed:.1f}с, выбран интервал {interval}с, "
+        f"готов к отправке: {elapsed >= interval}"
+    )
     return elapsed >= interval
 
 
@@ -78,6 +99,7 @@ async def notification_worker(bot: Bot):
     
     while True:
         try:
+            logger.debug(f"Воркер проверяет пользователей в главном меню: {len(_users_in_main_menu)}")
             # Проверяем всех пользователей в главном меню
             users_to_notify = []
             for user_id in list(_users_in_main_menu):
@@ -90,12 +112,12 @@ async def notification_worker(bot: Bot):
                 # Небольшая задержка между отправками, чтобы не перегружать API
                 await asyncio.sleep(0.5)
             
-            # Ждем перед следующей проверкой (проверяем каждую минуту)
-            await asyncio.sleep(60)
+            # Ждем перед следующей проверкой
+            await asyncio.sleep(CHECK_PERIOD_SECONDS)
             
         except Exception as e:
             logger.error(f"Ошибка в notification_worker: {e}", exc_info=True)
-            await asyncio.sleep(60)
+            await asyncio.sleep(CHECK_PERIOD_SECONDS)
 
 
 async def track_main_menu_entry(message: Message):

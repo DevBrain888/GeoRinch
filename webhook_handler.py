@@ -9,6 +9,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.types import Update
 
 import config
+from handlers.notifications import on_startup as notifications_on_startup
 
 logger = logging.getLogger(__name__)
 
@@ -182,6 +183,15 @@ def create_webhook_app(bot_instance: Bot, dispatcher_instance: Dispatcher) -> Fa
         title="Telegram Bot Webhook",
         description="Вебхук endpoint для Telegram бота"
     )
+
+    # Гарантируем запуск фонового воркера уведомлений в режиме WEBHOOK
+    @app.on_event("startup")
+    async def startup_event():
+        try:
+            await notifications_on_startup(dp)
+            logger.info("Startup hook уведомлений выполнен (WEBHOOK режим)")
+        except Exception as e:
+            logger.error(f"Ошибка при выполнении startup уведомлений: {e}", exc_info=True)
     
     # Регистрируем endpoint для приёма обновлений от Telegram
     # Telegram отправляет POST запросы на этот URL с JSON данными Update

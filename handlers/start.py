@@ -5,7 +5,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message
 
 from keyboards import get_main_keyboard
-from handlers.notifications import add_user_to_main_menu
+from handlers.notifications import add_user_to_main_menu, SMOKING_BAN_NOTIFICATION, need_one_time_start_smoking_notice
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +28,10 @@ async def cmd_start(message: Message):
 
 Внимание! Бот находиться на стадий тестирования, поэтому могут быть небольшие ошибки или неточности."""
         await message.answer(welcome_text)
+        # Одноразовое напоминание между приветствием и меню (только при первом /start за сессию процесса)
+        user_id = message.from_user.id if message.from_user else None
+        if user_id and need_one_time_start_smoking_notice(user_id):
+            await message.answer(SMOKING_BAN_NOTIFICATION)
         await message.answer("Выберите режим:", reply_markup=get_main_keyboard())
         # Отслеживаем, что пользователь в главном меню
         user_id = message.from_user.id if message.from_user else None
