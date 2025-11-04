@@ -1,5 +1,6 @@
 """Клавиатуры бота"""
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from handlers.constants import GUIDE_SHOP_TEXT, GUIDE_APTEKA_TEXT, GUIDE_CHANCELLERY_TEXT
 
 
 def get_main_keyboard() -> ReplyKeyboardMarkup:
@@ -26,7 +27,8 @@ def get_main_keyboard() -> ReplyKeyboardMarkup:
 def get_place_guide() -> ReplyKeyboardMarkup: # Кнопки для кнопки Сравочник с 15 строки. 
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Магазин пятерочка"), KeyboardButton(text="Аптека")],
+            [KeyboardButton(text=GUIDE_SHOP_TEXT), KeyboardButton(text=GUIDE_APTEKA_TEXT)],
+            [KeyboardButton(text=GUIDE_CHANCELLERY_TEXT)],
         ],
         resize_keyboard=True # размерр клавиатуры соотвествует размеру клавиатуры в телеграме
     )
@@ -47,7 +49,7 @@ def get_floor_selection_keyboard() -> ReplyKeyboardMarkup:
 def get_first_floor_rooms_keyboard() -> ReplyKeyboardMarkup:
     room_buttons = [
         "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111",
-        "Охрана", "Гардероб", "Туалет", "Канцелярия", "Каб. Воспитательной работы", "Каб. Директора",
+        "Охрана", "Гардероб", "Туалет", "Канцелярия (в колледже)", "Каб. Воспитательной работы", "Каб. Директора",
     ]
     keyboard_layout = [[KeyboardButton(text=label)] for label in room_buttons]
     keyboard = ReplyKeyboardMarkup(

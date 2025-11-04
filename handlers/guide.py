@@ -4,7 +4,7 @@ from aiogram import Dispatcher, F
 from aiogram.types import Message
 
 from keyboards import get_main_keyboard, get_place_guide
-from handlers.constants import GUIDE_ENTRY_TEXT, GUIDE_SHOP_TEXT, GUIDE_APTEKA_TEXT, GUIDE_SHOP, GUIDE_APTEKA
+from handlers.constants import GUIDE_CHANCELLERY, GUIDE_CHANCELLERY_TEXT, GUIDE_ENTRY_TEXT, GUIDE_SHOP_TEXT, GUIDE_APTEKA_TEXT, GUIDE_SHOP, GUIDE_APTEKA
 from handlers.notifications import add_user_to_main_menu, remove_user_from_main_menu
 
 logger = logging.getLogger(__name__)
@@ -30,6 +30,8 @@ async def on_guide_select(message: Message):
             await message.answer_photo(photo=GUIDE_APTEKA)
         elif text == GUIDE_APTEKA_TEXT:
             await message.answer_photo(photo=GUIDE_SHOP)
+        elif text == GUIDE_CHANCELLERY_TEXT:
+            await message.answer_photo(photo=GUIDE_CHANCELLERY)
         else:
             return
         await message.answer("Выберите режим:", reply_markup=get_main_keyboard())
@@ -46,6 +48,6 @@ def register_guide_handlers(dp: Dispatcher):
     dp.message.register(on_guide_entry, F.text == GUIDE_ENTRY_TEXT)
     dp.message.register(
         on_guide_select,
-        F.text.in_({GUIDE_SHOP_TEXT, GUIDE_APTEKA_TEXT}),
+        F.text.in_({GUIDE_SHOP_TEXT, GUIDE_APTEKA_TEXT, GUIDE_CHANCELLERY_TEXT}),
     )
 

@@ -18,9 +18,12 @@ def register_all_handlers(dp, bot):
     # чтобы они срабатывали до обработчиков без фильтров
     register_route_handlers(dp)  # Сначала маршрут (имеет фильтры состояния)
     register_map_handlers(dp)    # Затем карта (имеет фильтры состояния)
+    # Справочник должен регистрироваться раньше поиска, чтобы кнопки
+    # с одинаковым текстом (например, "Канцелярия") обрабатывались справочником
+    # и не перехватывались обработчиками поиска кабинетов.
+    register_guide_handlers(dp)
     register_search_handlers(dp) # Затем поиск (без фильтров, но проверяет состояние внутри)
     register_favorites_handlers(dp)
-    register_guide_handlers(dp)
     register_notification_handlers(dp, bot)  # Уведомления (нужен bot для фоновой задачи)
 
 

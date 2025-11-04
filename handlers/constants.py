@@ -7,6 +7,7 @@ MAP_ENTRY_TEXT = "Карта колледжа"
 GUIDE_ENTRY_TEXT = "Справочник"
 GUIDE_SHOP_TEXT = "Магазин пятерочка"
 GUIDE_APTEKA_TEXT = "Аптека"
+GUIDE_CHANCELLERY_TEXT = "Канцелярия (снаружи)"
 FAVORITES_ENTRY_TEXT = "Избранное"
 
 # Тексты этажей
@@ -24,11 +25,12 @@ FOURTH_FLOOR_ROOM_IMAGE_URL = "https://i.ibb.co/DDpVqcFP/4Floor.jpg"
 # URL изображений справочника
 GUIDE_SHOP = "https://i.ibb.co/tjcVCG1/guide-apteka.png"
 GUIDE_APTEKA = "https://i.ibb.co/5hvtkHdZ/guide-shop.png"
+GUIDE_CHANCELLERY = "https://i.ibb.co/zWYrzLRd/guide-chancellery.png"
 
 # Список кнопок кабинетов по этажам
 FIRST_FLOOR_ROOM_BUTTONS = {
     "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111",
-    "Охрана", "Гардероб", "Туалет", "Канцелярия", "Каб. Воспитательной работы", "Каб. Директора",
+    "Охрана", "Гардероб", "Туалет", "Канцелярия (в колледже)", "Каб. Воспитательной работы", "Каб. Директора",
 }
 
 SECOND_FLOOR_ROOM_BUTTONS = {

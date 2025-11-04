@@ -127,8 +127,12 @@ async def on_room_selected(message: Message):
         user_id = message.from_user.id if message.from_user else None
         image_url = None
 
-        # Определяем изображение по последнему выбранному этажу пользователя
+        # Обрабатываем выбор кабинета только если пользователь в сценарии поиска
+        # (этаж уже был выбран и сохранён). Это предотвращает конфликт с одноимёнными
+        # кнопками из других сценариев, например, "Справочник".
         last_floor = _user_last_selected_floor.get(user_id) if user_id else None
+        if last_floor is None:
+            return
         if last_floor == 1:
             image_url = FIRST_FLOOR_ROOM_IMAGE_URL
         elif last_floor == 2:
@@ -138,7 +142,7 @@ async def on_room_selected(message: Message):
         elif last_floor == 4:
             image_url = FOURTH_FLOOR_ROOM_IMAGE_URL
         else:
-            # Fallback: определяем по наборам кнопок (на случай, если нет состояния)
+            # Дополнительная защита (не должна срабатывать при наличии last_floor)
             if selected_text in SECOND_FLOOR_ROOM_BUTTONS:
                 image_url = SECOND_FLOOR_ROOM_IMAGE_URL
             elif selected_text in THIRD_FLOOR_ROOM_BUTTONS:
