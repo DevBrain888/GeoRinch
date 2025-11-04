@@ -10,6 +10,10 @@ from aiogram.types import Message
 
 logger = logging.getLogger(__name__)
 
+# Храним экземпляр бота, переданный при регистрации хендлеров,
+# чтобы иметь к нему доступ в on_startup как в polling, так и в webhook режимах
+_bot_instance: Bot | None = None
+
 # Текст уведомления о запрете курения
 SMOKING_BAN_NOTIFICATION = (
     "🚭 Напоминание: Запрещено курить возле колледжа и прокуратуры!"
@@ -133,16 +137,23 @@ async def track_main_menu_entry(message: Message):
 async def on_startup(dispatcher):
     """Хук запуска, вызывается при старте бота."""
     logger.info("Запуск воркера периодических уведомлений...")
-    # Получаем bot из dispatcher
-    bot = dispatcher.bot
-    asyncio.create_task(notification_worker(bot))
+    # В aiogram 3.x у Dispatcher нет атрибута bot, поэтому используем
+    # экземпляр, сохранённый при регистрации обработчиков
+    global _bot_instance
+    if _bot_instance is None:
+        logger.error("Экземпляр Bot не инициализирован для уведомлений — воркер не запущен")
+        return
+    asyncio.create_task(notification_worker(_bot_instance))
     logger.info("Воркер периодических уведомлений запущен")
 
 
 def register_notification_handlers(dp, bot: Bot):
     """Регистрация обработчиков уведомлений."""
-    # Регистрируем хук запуска для polling режима
-    # В aiogram 3.x startup хуки принимают dispatcher
+    # Сохраняем экземпляр бота для последующего использования в on_startup
+    global _bot_instance
+    _bot_instance = bot
+    # Регистрируем хук запуска
+    # В aiogram 3.x startup хуки получают dispatcher, но бота берём из _bot_instance
     dp.startup.register(on_startup)
     logger.info("Зарегистрированы обработчики уведомлений")
 
