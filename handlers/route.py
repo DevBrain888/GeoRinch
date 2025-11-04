@@ -2,7 +2,7 @@
 import logging
 from typing import Dict, Any, Set
 from aiogram import Dispatcher, F
-from aiogram.types import Message, BufferedInputFile
+from aiogram.types import Message, BufferedInputFile, InlineKeyboardMarkup, InlineKeyboardButton
 
 from keyboards import get_main_keyboard, get_floor_selection_keyboard
 from handlers.constants import (
@@ -193,10 +193,18 @@ async def on_route_room(message: Message):
                         path_image.read(),
                         filename="route.png"
                     )
+                    # Создаем кнопку для добавления маршрута в избранное
+                    route_key = f"route:{room_a}:{selected_room}"
+                    add_route_kb = InlineKeyboardMarkup(inline_keyboard=[[
+                        InlineKeyboardButton(
+                            text="⭐ Добавить маршрут в избранное",
+                            callback_data=f"add_route_favorite:{route_key}"
+                        )
+                    ]])
                     await message.answer_photo(
                         photo=photo_file,
                         caption=f"Маршрут от кабинета {room_a} до кабинета {selected_room}",
-                        reply_markup=get_main_keyboard()
+                        reply_markup=add_route_kb
                     )
             except Exception as e:
                 logger.error(f"Ошибка при построении маршрута: {e}", exc_info=True)
