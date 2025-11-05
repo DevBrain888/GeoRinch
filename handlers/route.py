@@ -146,6 +146,8 @@ async def on_route_room(message: Message):
             if not floor_b or selected_room not in get_rooms_set_by_floor(floor_b):
                 return
             
+
+            
             # Проверяем, что кабинеты разные
             room_a = st.get("room_a", "")
             if selected_room == room_a:
