@@ -206,6 +206,11 @@ async def on_route_room(message: Message):
                         caption=f"Маршрут от кабинета {room_a} до кабинета {selected_room}",
                         reply_markup=add_route_kb
                     )
+                    # После отправки изображения с инлайн-кнопкой, отдельно возвращаем основное меню
+                    await message.answer(
+                        "Готово. Выберите режим:",
+                        reply_markup=get_main_keyboard()
+                    )
             except Exception as e:
                 logger.error(f"Ошибка при построении маршрута: {e}", exc_info=True)
                 await message.answer(
