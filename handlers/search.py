@@ -41,6 +41,40 @@ from handlers.constants import (
     FIRST_FLOOR_SELECTED_ROOM_Охрана,
     FIRST_FLOOR_SELECTED_ROOM_Гардероб,
     FIRST_FLOOR_SELECTED_ROOM_Туалет,
+    # Выделенные кабинеты 2 этажа
+    SECOND_FLOOR_SELECTED_ROOM_201,
+    SECOND_FLOOR_SELECTED_ROOM_202,
+    SECOND_FLOOR_SELECTED_ROOM_203,
+    SECOND_FLOOR_SELECTED_ROOM_204,
+    SECOND_FLOOR_SELECTED_ROOM_205,
+    SECOND_FLOOR_SELECTED_ROOM_206,
+    SECOND_FLOOR_SELECTED_ROOM_207,
+    SECOND_FLOOR_SELECTED_ROOM_208,
+    SECOND_FLOOR_SELECTED_ROOM_209,
+    SECOND_FLOOR_SELECTED_ROOM_210,
+    SECOND_FLOOR_SELECTED_ROOM_211,
+    SECOND_FLOOR_SELECTED_ROOM_212,
+    SECOND_FLOOR_SELECTED_ROOM_Мужской_Туалет,
+    SECOND_FLOOR_SELECTED_ROOM_Женский_Туалет,
+    # Выделенные кабинеты 3 этажа
+    THIRD_FLOOR_SELECTED_ROOM_301,
+    THIRD_FLOOR_SELECTED_ROOM_302,
+    THIRD_FLOOR_SELECTED_ROOM_303,
+    THIRD_FLOOR_SELECTED_ROOM_304,
+    THIRD_FLOOR_SELECTED_ROOM_305,
+    THIRD_FLOOR_SELECTED_ROOM_306,
+    THIRD_FLOOR_SELECTED_ROOM_309,
+    THIRD_FLOOR_SELECTED_ROOM_311,
+    THIRD_FLOOR_SELECTED_ROOM_Актовый_Зал,
+    # Выделенные кабинеты 4 этажа
+    FOURTH_FLOOR_SELECTED_ROOM_403,
+    FOURTH_FLOOR_SELECTED_ROOM_404,
+    FOURTH_FLOOR_SELECTED_ROOM_405,
+    FOURTH_FLOOR_SELECTED_ROOM_406,
+    FOURTH_FLOOR_SELECTED_ROOM_407,
+    FOURTH_FLOOR_SELECTED_ROOM_Каб_Психолога,
+    FOURTH_FLOOR_SELECTED_ROOM_Мужской_Туалет,
+    FOURTH_FLOOR_SELECTED_ROOM_Женский_Туалет,
 )
 from handlers.map import is_user_in_map_mode
 from handlers.route import is_user_in_route_mode
@@ -153,6 +187,53 @@ FIRST_FLOOR_ROOM_IMAGES = {
 }
 
 
+# Словарь для сопоставления кабинетов второго этажа с их изображениями
+SECOND_FLOOR_ROOM_IMAGES = {
+    "201": SECOND_FLOOR_SELECTED_ROOM_201,
+    "202": SECOND_FLOOR_SELECTED_ROOM_202,
+    "203": SECOND_FLOOR_SELECTED_ROOM_203,
+    "204": SECOND_FLOOR_SELECTED_ROOM_204,
+    "205": SECOND_FLOOR_SELECTED_ROOM_205,
+    "206": SECOND_FLOOR_SELECTED_ROOM_206,
+    "207": SECOND_FLOOR_SELECTED_ROOM_207,
+    "208": SECOND_FLOOR_SELECTED_ROOM_208,
+    "209": SECOND_FLOOR_SELECTED_ROOM_209,
+    "210": SECOND_FLOOR_SELECTED_ROOM_210,
+    "211": SECOND_FLOOR_SELECTED_ROOM_211,
+    "212": SECOND_FLOOR_SELECTED_ROOM_212,
+    "Мужской Туалет": SECOND_FLOOR_SELECTED_ROOM_Мужской_Туалет,
+    "Женский Туалет": SECOND_FLOOR_SELECTED_ROOM_Женский_Туалет,
+}
+
+
+# Словарь для сопоставления кабинетов третьего этажа с их изображениями
+THIRD_FLOOR_ROOM_IMAGES = {
+    "301": THIRD_FLOOR_SELECTED_ROOM_301,
+    "302": THIRD_FLOOR_SELECTED_ROOM_302,
+    "303": THIRD_FLOOR_SELECTED_ROOM_303,
+    # Некоторые кабинеты могут быть без изображения (пустая строка) — обработаем ниже
+    "304": THIRD_FLOOR_SELECTED_ROOM_304,
+    "305": THIRD_FLOOR_SELECTED_ROOM_305,
+    "306": THIRD_FLOOR_SELECTED_ROOM_306,
+    "309": THIRD_FLOOR_SELECTED_ROOM_309,
+    "311": THIRD_FLOOR_SELECTED_ROOM_311,
+    "Актовый Зал": THIRD_FLOOR_SELECTED_ROOM_Актовый_Зал,
+}
+
+
+# Словарь для сопоставления кабинетов четвертого этажа с их изображениями
+FOURTH_FLOOR_ROOM_IMAGES = {
+    "403": FOURTH_FLOOR_SELECTED_ROOM_403,
+    "404": FOURTH_FLOOR_SELECTED_ROOM_404,
+    "405": FOURTH_FLOOR_SELECTED_ROOM_405,
+    "406": FOURTH_FLOOR_SELECTED_ROOM_406,
+    "407": FOURTH_FLOOR_SELECTED_ROOM_407,
+    "Каб. Психолога": FOURTH_FLOOR_SELECTED_ROOM_Каб_Психолога,
+    "Мужской Туалет": FOURTH_FLOOR_SELECTED_ROOM_Мужской_Туалет,
+    "Женский Туалет": FOURTH_FLOOR_SELECTED_ROOM_Женский_Туалет,
+}
+
+
 async def on_room_selected(message: Message):
     """Отправить картинку выбранного этажа и показать инлайн кнопку добавления в избранное."""
     try:
@@ -176,11 +257,19 @@ async def on_room_selected(message: Message):
                 # Если нет специального изображения, используем общее изображение этажа
                 image_url = FIRST_FLOOR_ROOM_IMAGE_URL
         elif last_floor == 2:
-            image_url = SECOND_FLOOR_ROOM_IMAGE_URL
+            # Проверяем, есть ли специальное изображение для этого кабинета
+            if selected_text in SECOND_FLOOR_ROOM_IMAGES:
+                image_url = SECOND_FLOOR_ROOM_IMAGES[selected_text]
+            else:
+                image_url = SECOND_FLOOR_ROOM_IMAGE_URL
         elif last_floor == 3:
-            image_url = THIRD_FLOOR_ROOM_IMAGE_URL
+            # Проверяем, есть ли специальное изображение для этого кабинета
+            img = THIRD_FLOOR_ROOM_IMAGES.get(selected_text)
+            image_url = img if img else THIRD_FLOOR_ROOM_IMAGE_URL
         elif last_floor == 4:
-            image_url = FOURTH_FLOOR_ROOM_IMAGE_URL
+            # Проверяем, есть ли специальное изображение для этого кабинета
+            img = FOURTH_FLOOR_ROOM_IMAGES.get(selected_text)
+            image_url = img if img else FOURTH_FLOOR_ROOM_IMAGE_URL
         else:
             # Дополнительная защита (не должна срабатывать при наличии last_floor)
             if selected_text in SECOND_FLOOR_ROOM_BUTTONS:

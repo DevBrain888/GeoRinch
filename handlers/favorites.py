@@ -28,6 +28,40 @@ from handlers.constants import (
     FIRST_FLOOR_SELECTED_ROOM_Охрана,
     FIRST_FLOOR_SELECTED_ROOM_Гардероб,
     FIRST_FLOOR_SELECTED_ROOM_Туалет,
+    # Выделенные кабинеты 2 этажа
+    SECOND_FLOOR_SELECTED_ROOM_201,
+    SECOND_FLOOR_SELECTED_ROOM_202,
+    SECOND_FLOOR_SELECTED_ROOM_203,
+    SECOND_FLOOR_SELECTED_ROOM_204,
+    SECOND_FLOOR_SELECTED_ROOM_205,
+    SECOND_FLOOR_SELECTED_ROOM_206,
+    SECOND_FLOOR_SELECTED_ROOM_207,
+    SECOND_FLOOR_SELECTED_ROOM_208,
+    SECOND_FLOOR_SELECTED_ROOM_209,
+    SECOND_FLOOR_SELECTED_ROOM_210,
+    SECOND_FLOOR_SELECTED_ROOM_211,
+    SECOND_FLOOR_SELECTED_ROOM_212,
+    SECOND_FLOOR_SELECTED_ROOM_Мужской_Туалет,
+    SECOND_FLOOR_SELECTED_ROOM_Женский_Туалет,
+    # Выделенные кабинеты 3 этажа
+    THIRD_FLOOR_SELECTED_ROOM_301,
+    THIRD_FLOOR_SELECTED_ROOM_302,
+    THIRD_FLOOR_SELECTED_ROOM_303,
+    THIRD_FLOOR_SELECTED_ROOM_304,
+    THIRD_FLOOR_SELECTED_ROOM_305,
+    THIRD_FLOOR_SELECTED_ROOM_306,
+    THIRD_FLOOR_SELECTED_ROOM_309,
+    THIRD_FLOOR_SELECTED_ROOM_311,
+    THIRD_FLOOR_SELECTED_ROOM_Актовый_Зал,
+    # Выделенные кабинеты 4 этажа
+    FOURTH_FLOOR_SELECTED_ROOM_403,
+    FOURTH_FLOOR_SELECTED_ROOM_404,
+    FOURTH_FLOOR_SELECTED_ROOM_405,
+    FOURTH_FLOOR_SELECTED_ROOM_406,
+    FOURTH_FLOOR_SELECTED_ROOM_407,
+    FOURTH_FLOOR_SELECTED_ROOM_Каб_Психолога,
+    FOURTH_FLOOR_SELECTED_ROOM_Мужской_Туалет,
+    FOURTH_FLOOR_SELECTED_ROOM_Женский_Туалет,
 )
 from handlers.db.favorites import add_favorite, remove_favorite, list_favorites
 from handlers.notifications import add_user_to_main_menu, remove_user_from_main_menu
@@ -350,6 +384,49 @@ async def on_show_favorite_callback(callback: CallbackQuery):
             "Туалет": FIRST_FLOOR_SELECTED_ROOM_Туалет,
         }
         
+        # Сопоставление кабинетов второго этажа с выделенными изображениями
+        SECOND_FLOOR_ROOM_IMAGES = {
+            "201": SECOND_FLOOR_SELECTED_ROOM_201,
+            "202": SECOND_FLOOR_SELECTED_ROOM_202,
+            "203": SECOND_FLOOR_SELECTED_ROOM_203,
+            "204": SECOND_FLOOR_SELECTED_ROOM_204,
+            "205": SECOND_FLOOR_SELECTED_ROOM_205,
+            "206": SECOND_FLOOR_SELECTED_ROOM_206,
+            "207": SECOND_FLOOR_SELECTED_ROOM_207,
+            "208": SECOND_FLOOR_SELECTED_ROOM_208,
+            "209": SECOND_FLOOR_SELECTED_ROOM_209,
+            "210": SECOND_FLOOR_SELECTED_ROOM_210,
+            "211": SECOND_FLOOR_SELECTED_ROOM_211,
+            "212": SECOND_FLOOR_SELECTED_ROOM_212,
+            "Мужской Туалет": SECOND_FLOOR_SELECTED_ROOM_Мужской_Туалет,
+            "Женский Туалет": SECOND_FLOOR_SELECTED_ROOM_Женский_Туалет,
+        }
+
+        # Сопоставление кабинетов третьего этажа с выделенными изображениями
+        THIRD_FLOOR_ROOM_IMAGES = {
+            "301": THIRD_FLOOR_SELECTED_ROOM_301,
+            "302": THIRD_FLOOR_SELECTED_ROOM_302,
+            "303": THIRD_FLOOR_SELECTED_ROOM_303,
+            "304": THIRD_FLOOR_SELECTED_ROOM_304,
+            "305": THIRD_FLOOR_SELECTED_ROOM_305,
+            "306": THIRD_FLOOR_SELECTED_ROOM_306,
+            "309": THIRD_FLOOR_SELECTED_ROOM_309,
+            "311": THIRD_FLOOR_SELECTED_ROOM_311,
+            "Актовый Зал": THIRD_FLOOR_SELECTED_ROOM_Актовый_Зал,
+        }
+
+        # Сопоставление кабинетов четвертого этажа с выделенными изображениями
+        FOURTH_FLOOR_ROOM_IMAGES = {
+            "403": FOURTH_FLOOR_SELECTED_ROOM_403,
+            "404": FOURTH_FLOOR_SELECTED_ROOM_404,
+            "405": FOURTH_FLOOR_SELECTED_ROOM_405,
+            "406": FOURTH_FLOOR_SELECTED_ROOM_406,
+            "407": FOURTH_FLOOR_SELECTED_ROOM_407,
+            "Каб. Психолога": FOURTH_FLOOR_SELECTED_ROOM_Каб_Психолога,
+            "Мужской Туалет": FOURTH_FLOOR_SELECTED_ROOM_Мужской_Туалет,
+            "Женский Туалет": FOURTH_FLOOR_SELECTED_ROOM_Женский_Туалет,
+        }
+        
         # Определяем этаж по названию кабинета
         if room in FIRST_FLOOR_ROOM_BUTTONS:
             # Для первого этажа проверяем, есть ли специальное изображение
@@ -359,11 +436,19 @@ async def on_show_favorite_callback(callback: CallbackQuery):
                 # Если нет специального изображения, используем общее изображение этажа
                 image_url = FIRST_FLOOR_ROOM_IMAGE_URL
         elif room in SECOND_FLOOR_ROOM_BUTTONS:
-            image_url = SECOND_FLOOR_ROOM_IMAGE_URL
+            # Для второго этажа проверяем, есть ли специальное изображение
+            if room in SECOND_FLOOR_ROOM_IMAGES:
+                image_url = SECOND_FLOOR_ROOM_IMAGES[room]
+            else:
+                image_url = SECOND_FLOOR_ROOM_IMAGE_URL
         elif room in THIRD_FLOOR_ROOM_BUTTONS:
-            image_url = THIRD_FLOOR_ROOM_IMAGE_URL
+            # Для третьего этажа проверяем, есть ли специальное изображение
+            img = THIRD_FLOOR_ROOM_IMAGES.get(room)
+            image_url = img if img else THIRD_FLOOR_ROOM_IMAGE_URL
         elif room in FOURTH_FLOOR_ROOM_BUTTONS:
-            image_url = FOURTH_FLOOR_ROOM_IMAGE_URL
+            # Для четвертого этажа проверяем, есть ли специальное изображение
+            img = FOURTH_FLOOR_ROOM_IMAGES.get(room)
+            image_url = img if img else FOURTH_FLOOR_ROOM_IMAGE_URL
         else:
             # Если кабинет не распознан, показываем первый этаж по умолчанию
             image_url = FIRST_FLOOR_ROOM_IMAGE_URL
