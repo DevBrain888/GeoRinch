@@ -26,11 +26,11 @@ _users_in_main_menu: Set[int] = set()
 _last_notification_time: Dict[int, datetime] = {}
 
 # Минимальный и максимальный интервал между уведомлениями (в секундах)
-MIN_INTERVAL = 7200  # 10 секунд
-MAX_INTERVAL = 14400  # 30 минут
+MIN_INTERVAL = 10800  # 10800 сек 3 часа
+MAX_INTERVAL = 43200  # 43200 сек 12 часов
 
 # Периодичность проверки
-CHECK_PERIOD_SECONDS = 60
+CHECK_PERIOD_SECONDS = 600 # проверять каждые 10 минут
 
 # Пользователи, которым уже отправлялось одноразовое сообщение при /start (за сессию процесса)
 _start_once_sent_users: Set[int] = set()
